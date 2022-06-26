@@ -46,7 +46,6 @@
                         <TextBlock Text="Load"/>
                     </StackPanel>
                 </Button>-->
-                <Separator/>
                 <Button MaxHeight="22" Command="{Binding ResetButtonCommand}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="/Images/delIcon.png"/>
