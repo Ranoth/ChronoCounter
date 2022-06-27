@@ -381,7 +381,15 @@ namespace ChronoCounter.ViewModels
                     Chronos.Add(item);
                 }
 
-                if(t.Any()) FunctionChrono.Counter = Chronos.Max(x => x.Number) + 1;
+                var tempTotTime = TimeSpan.Zero;
+                foreach (var item in Chronos)
+                    tempTotTime = tempTotTime.Add(item.Time);
+
+                totalElapsedTime = tempTotTime;
+
+                SetTotalTimeDisp();
+
+                if (t.Any()) FunctionChrono.Counter = Chronos.Max(x => x.Number) + 1;
                 else FunctionChrono.Counter = 1;
                 FunctionChrono.NoCounter = false;
 
