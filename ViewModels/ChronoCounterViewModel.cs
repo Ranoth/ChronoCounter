@@ -339,9 +339,15 @@ namespace ChronoCounter.ViewModels
         }
 
         [RelayCommand]
-        private async Task LoadButton()
+        private void UnLoadButton()
         {
+            currentSession = new();
+            ResetButton();
+        }
 
+        [RelayCommand]
+        private void LoadButton()
+        {
             using (SessionsDBdbContext context = new())
             {
                 FunctionChrono.NoCounter = true;
@@ -368,9 +374,7 @@ namespace ChronoCounter.ViewModels
 
                 var t = new BindingList<FunctionChrono>(subQuery.ToList());
 
-                Chronos.Clear();
-
-                FunctionChrono.Counter = 0;
+                ResetButton();
 
                 foreach (var item in t)
                 {
@@ -380,6 +384,8 @@ namespace ChronoCounter.ViewModels
                 if(t.Any()) FunctionChrono.Counter = Chronos.Max(x => x.Number) + 1;
                 else FunctionChrono.Counter = 1;
                 FunctionChrono.NoCounter = false;
+
+                ResetButtonCommand.NotifyCanExecuteChanged();
             }
         }
     }

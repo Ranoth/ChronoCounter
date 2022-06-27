@@ -43,13 +43,6 @@
                 </Button>
                 <!--Overflow-->
                 <ToolBar x:Name="innerToolBar" ToolBarTray.IsLocked="True" ToolBar.OverflowMode="Always">
-                    <Button MaxHeight="22" Command="{Binding NewButtonCommand}">
-                        <StackPanel Orientation="Horizontal">
-                            <Image/>
-                            <TextBlock Text="New" Margin="2,0,0,0"/>
-                        </StackPanel>
-                    </Button>
-                    <Separator/>
                     <Button MaxHeight="22" Command="{Binding SaveButtonCommand}">
                         <StackPanel Orientation="Horizontal">
                             <Image/>
@@ -57,10 +50,24 @@
                         </StackPanel>
                     </Button>
                     <Separator/>
-                    <Button MaxHeight="22" Command="{Binding LoadButtonCommand}">
+                    <Button MaxHeight="22" Command="{Binding NewButtonCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image/>
+                            <TextBlock Text="New" Margin="2,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Separator/>
+                    <Button MaxHeight="22" Command="{Binding LoadButtonCommand}" >
                         <StackPanel Orientation="Horizontal">
                             <Image/>
                             <TextBlock Text="Load" Margin="2,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Separator/>
+                    <Button MaxHeight="22" Command="{Binding UnLoadButtonCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image/>
+                            <TextBlock Text="UnLoad" Margin="2,0,0,0"/>
                         </StackPanel>
                     </Button>
                     <Separator/>
