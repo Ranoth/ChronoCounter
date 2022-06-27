@@ -3,11 +3,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ChronoCounter.Models
 {
-    public partial class Chrono : ViewModelBase
+    public partial class FunctionChrono : ViewModelBase
     {
         public static int Counter { get; set; }
+        public static bool NoCounter { get; set; }
         private TimeSpan time;
-        public int Id { get; set; }
+        public int Number { get; set; }
         public string Name { get; set; } = String.Empty;
         [ObservableProperty]
         private string displayTime = String.Empty;
@@ -23,10 +24,13 @@ namespace ChronoCounter.Models
             }
         }
 
-        public Chrono()
+        public FunctionChrono()
         {
-            Id = Counter;
-            Counter++;
+            if (!NoCounter)
+            {
+                Number = Counter;
+                Counter++;
+            }
         }
 
         private void SetDisplayTime(TimeSpan t)

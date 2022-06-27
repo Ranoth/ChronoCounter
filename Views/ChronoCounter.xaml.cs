@@ -15,6 +15,7 @@ namespace ChronoCounter.Views
         {
             InitializeComponent();
             //toolbar.Loaded += NoOverflowToolbar.ToolbarRemoveOverflowBorder;
+            innerToolBar.Loaded += NoOverflowToolbar.ToolbarRemoveOverflowBorder;
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)

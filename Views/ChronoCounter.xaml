@@ -17,8 +17,10 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
+
         <ToolBarTray Grid.Column="1" Background="LightGray">
             <ToolBar x:Name="toolbar" ToolBarTray.IsLocked="True" Background="LightGray">
+                <!--Regular-->
                 <ToggleButton IsChecked="{Binding IsTiming}" MaxHeight="22" Command="{Binding SplitButtonCommand}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{Binding SplitButtonImg}"/>
@@ -33,32 +35,43 @@
                     </StackPanel>
                 </ToggleButton>
                 <Separator/>
-                <!--<Button MaxHeight="22">
-                    <StackPanel Orientation="Horizontal">
-                        <Image/>
-                        <TextBlock Text="Save"/>
-                    </StackPanel>
-                </Button>
-                <Separator/>
-                <Button MaxHeight="22">
-                    <StackPanel Orientation="Horizontal">
-                        <Image/>
-                        <TextBlock Text="Load"/>
-                    </StackPanel>
-                </Button>-->
                 <Button MaxHeight="22" Command="{Binding ResetButtonCommand}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="/Images/delIcon.png"/>
                         <TextBlock Text="Reset Session" Margin="2,0,0,0"/>
                     </StackPanel>
                 </Button>
-                    <Button MaxHeight="22" Command="{Binding BindingSplitButtonCommand}" ToolBar.OverflowMode="Always">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Images/delIcon.png"/>
-                        <TextBlock Text="Bind Start / Stop" Margin="2,0,0,0" Visibility="{Binding BindDefaultTextVisible}"/>
-                        <TextBlock Text="{Binding BindingSplitButtonContent}" Margin="2,0,0,0"/>
-                    </StackPanel>
-                </Button>
+                <!--Overflow-->
+                <ToolBar x:Name="innerToolBar" ToolBarTray.IsLocked="True" ToolBar.OverflowMode="Always">
+                    <Button MaxHeight="22" Command="{Binding NewButtonCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image/>
+                            <TextBlock Text="New" Margin="2,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Separator/>
+                    <Button MaxHeight="22" Command="{Binding SaveButtonCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image/>
+                            <TextBlock Text="Save" Margin="2,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Separator/>
+                    <Button MaxHeight="22" Command="{Binding LoadButtonCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image/>
+                            <TextBlock Text="Load" Margin="2,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Separator/>
+                    <Button MaxHeight="22" Command="{Binding BindingSplitButtonCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Images/delIcon.png"/>
+                            <TextBlock Text="Bind Start / Stop" Margin="2,0,0,0" Visibility="{Binding BindDefaultTextVisible}"/>
+                            <TextBlock Text="{Binding BindingSplitButtonContent}" Margin="2,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                </ToolBar>
             </ToolBar>
         </ToolBarTray>
 
@@ -73,11 +86,10 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <!--<TextBox IsEnabled="False" FontSize="24" Text="{Binding Id}"/>-->
                             <TextBox IsEnabled="False" FontSize="24" Text="{Binding Name}" MinWidth="100"/>
                             <TextBox IsEnabled="False" FontSize="24" Text="{Binding DisplayTime}"/>
                             <Button Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.RemoveChronoCommand}"
-                                    CommandParameter="{Binding Id}">
+                                    CommandParameter="{Binding Number}">
                                 <Button.Content>
                                     <Image Source="/Images/removeIcon.png"/>
                                 </Button.Content>
