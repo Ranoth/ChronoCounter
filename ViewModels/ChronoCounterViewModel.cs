@@ -377,7 +377,8 @@ namespace ChronoCounter.ViewModels
                     Chronos.Add(item);
                 }
 
-                FunctionChrono.Counter = Chronos.Max(x => x.Number) + 1;
+                if(t.Any()) FunctionChrono.Counter = Chronos.Max(x => x.Number) + 1;
+                else FunctionChrono.Counter = 1;
                 FunctionChrono.NoCounter = false;
             }
         }
