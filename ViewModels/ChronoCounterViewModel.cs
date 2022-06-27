@@ -15,6 +15,7 @@ using System.IO;
 using System.Text;
 using ChronoCounter.DBModels;
 using ChronoCounter.DBContexts;
+using System.Collections.ObjectModel;
 
 namespace ChronoCounter.ViewModels
 {
@@ -26,6 +27,8 @@ namespace ChronoCounter.ViewModels
         private TimeSpan totalElapsedTime;
         private HotKey keyBindSplit = new();
         private Session currentSession = new();
+        private List<Chronos> chronosToRemove = new();
+        private ObservableCollection<Chronos> listChronos = new();
 
         [NotifyCanExecuteChangedFor(nameof(PauseButtonCommand))]
         [ObservableProperty]
@@ -46,6 +49,10 @@ namespace ChronoCounter.ViewModels
         private string totalTimeDisp = "00:00:00.00";
         [ObservableProperty]
         private string bindDefaultTextVisible = "Visible";
+        [ObservableProperty]
+        private string sessionNameDisp = "None";
+        [ObservableProperty]
+        private string sessionNbDisp = "None";
 
         public HotKey KeyBindSplit
         {
@@ -68,7 +75,6 @@ namespace ChronoCounter.ViewModels
             Chronos.ListChanged += (s, e) =>
             {
                 ResetButtonCommand.NotifyCanExecuteChanged();
-                //PrepareUpdateCurrentSession(s, e);
             };
 
             WeakReferenceMessenger.Default.Register<KeyToBindSplitMessage>(this, (r, m) =>
@@ -159,7 +165,7 @@ namespace ChronoCounter.ViewModels
                 SplitButtonContent = "Start";
                 SplitButtonImg = "/Images/plusButtonIcon.png";
 
-                currentSession.Chronos.Add(FcToC(chrono));
+                listChronos.Add(FcToC(chrono));
             }
         }
         public void Timer_Tick(object sender, EventArgs e)
@@ -172,11 +178,11 @@ namespace ChronoCounter.ViewModels
         private void RemoveChrono(int id)
         {
             var fChronoToRemove = Chronos.FirstOrDefault(x => x.Number == id);
-            var chronoToRemove = currentSession.Chronos.FirstOrDefault(x => x.Number == id);
+            var chronoToRemove = listChronos.FirstOrDefault(x => x.Number == id);
             totalElapsedTime = totalElapsedTime.Subtract(fChronoToRemove.Time);
             SetTotalTimeDisp();
+            chronosToRemove.Add(chronoToRemove);
             Chronos.Remove(fChronoToRemove);
-            currentSession.Chronos.Remove(chronoToRemove);
         }
 
         [RelayCommand]
@@ -225,8 +231,9 @@ namespace ChronoCounter.ViewModels
                 stopWatch.Stop();
                 Timer.Stop();
 
-                currentSession.Chronos.Clear();
+                Chronos.Clear();
 
+                chronosToRemove.AddRange(listChronos);
 
                 totalElapsedTime = TimeSpan.Zero;
                 SetTotalTimeDisp();
@@ -240,7 +247,6 @@ namespace ChronoCounter.ViewModels
                 PauseButtonImg = "/Images/pauseIcon.png";
                 PauseButtonContent = "Pause";
             }
-            Chronos.Clear();
 
             FunctionChrono.Counter = 1;
             ResetButtonCommand.NotifyCanExecuteChanged();
@@ -268,49 +274,22 @@ namespace ChronoCounter.ViewModels
             return crn;
         }
 
-        //private void PrepareUpdateCurrentSession(object? sender, ListChangedEventArgs e)
-        //{
-        //    var cList = sender as BindingList<FunctionChrono>;
-
-        //    switch (e.ListChangedType)
-        //    {
-        //        case ListChangedType.Reset:
-        //            break;
-        //        case ListChangedType.ItemAdded:
-        //            break;
-        //        case ListChangedType.ItemDeleted:
-        //            break;
-        //        case ListChangedType.ItemMoved:
-        //            break;
-        //        case ListChangedType.ItemChanged:
-        //            break;
-        //        case ListChangedType.PropertyDescriptorAdded:
-        //            break;
-        //        case ListChangedType.PropertyDescriptorDeleted:
-        //            break;
-        //        case ListChangedType.PropertyDescriptorChanged:
-        //            break;
-        //    }
-        //}
-
-        [RelayCommand(CanExecute = nameof(CanSave))]
+        [RelayCommand]
         private void SaveButton()
         {
-            if (currentSession.Id == 0 && currentSession.Name == null)
-                NewButton();
+            if (currentSession.Id == 0 && currentSession.Name == null) NewButton();
             else
             {
                 using (SessionsDBdbContext context = new())
                 {
                     context.Update(currentSession);
-
+                    context.UpdateRange(listChronos);
+                    context.RemoveRange(chronosToRemove);
                     context.SaveChanges();
+
+                    chronosToRemove.Clear();
                 }
             }
-        }
-        private bool CanSave()
-        {
-            return true;
         }
         [RelayCommand]
         private void NewButton()
@@ -335,6 +314,9 @@ namespace ChronoCounter.ViewModels
                     context.Session.Add(currentSession);
                     context.SaveChanges();
                 }
+
+                SessionNameDisp = currentSession.Name;
+                SessionNbDisp = currentSession.Id.ToString();
             }
         }
 
@@ -342,6 +324,8 @@ namespace ChronoCounter.ViewModels
         private void UnLoadButton()
         {
             currentSession = new();
+            SessionNameDisp = "None";
+            SessionNbDisp = "None";
             ResetButton();
         }
 
@@ -351,6 +335,10 @@ namespace ChronoCounter.ViewModels
             using (SessionsDBdbContext context = new())
             {
                 FunctionChrono.NoCounter = true;
+
+                chronosToRemove.Clear();
+                currentSession.Chronos.Clear();
+
                 var query = (from sessions in context.Session
                              select new Session
                              {
@@ -364,6 +352,8 @@ namespace ChronoCounter.ViewModels
 
                 currentSession = loadWindow?.Selected ?? new();
 
+                listChronos = new ObservableCollection<Chronos>(context.Chronos.Where(x => x.SessionId == currentSession.Id).ToList());
+
                 var subQuery = from chronos in currentSession.Chronos
                                select new FunctionChrono
                                {
@@ -372,11 +362,13 @@ namespace ChronoCounter.ViewModels
                                    Number = (int)chronos.Number
                                };
 
-                var t = new BindingList<FunctionChrono>(subQuery.ToList());
+                var _ = new BindingList<FunctionChrono>(subQuery.ToList());
 
                 ResetButton();
 
-                foreach (var item in t)
+                chronosToRemove.Clear();
+
+                foreach (var item in _)
                 {
                     Chronos.Add(item);
                 }
@@ -389,9 +381,13 @@ namespace ChronoCounter.ViewModels
 
                 SetTotalTimeDisp();
 
-                if (t.Any()) FunctionChrono.Counter = Chronos.Max(x => x.Number) + 1;
+                if (_.Any()) FunctionChrono.Counter = Chronos.Max(x => x.Number) + 1;
                 else FunctionChrono.Counter = 1;
                 FunctionChrono.NoCounter = false;
+
+                SessionNameDisp = currentSession?.Name ?? "None";
+                if (currentSession.Id == 0) SessionNbDisp = "None";
+                else SessionNbDisp = currentSession.Id.ToString();
 
                 ResetButtonCommand.NotifyCanExecuteChanged();
             }

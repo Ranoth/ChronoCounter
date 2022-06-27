@@ -114,6 +114,15 @@
                     <TextBlock Text="{Binding TotalTimeDisp}"/>
                 </WrapPanel>
             </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <WrapPanel>
+                    <TextBlock Text="Session Id : "/>
+                    <TextBlock Text="{Binding SessionNbDisp}"/>
+                    <TextBlock Text=", Name : "/>
+                    <TextBlock Text="{Binding SessionNameDisp}"/>
+                </WrapPanel>
+            </StatusBarItem>
         </StatusBar>
     </Grid>
 </UserControl>
