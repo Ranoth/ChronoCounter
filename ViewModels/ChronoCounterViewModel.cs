@@ -334,27 +334,29 @@ namespace ChronoCounter.ViewModels
         {
             using (SessionsDBdbContext context = new())
             {
-                FunctionChrono.NoCounter = true;
+                var query = from sessions in context.Session
+                            select new Session
+                            {
+                                Name = sessions.Name,
+                                Id = sessions.Id,
+                                Chronos = sessions.Chronos
+                            };
 
-                chronosToRemove.Clear();
-                currentSession.Chronos.Clear();
-
-                var query = (from sessions in context.Session
-                             select new Session
-                             {
-                                 Name = sessions.Name,
-                                 Id = sessions.Id,
-                                 Chronos = sessions.Chronos
-                             }).ToList();
-
-                var loadWindow = new LoadWindow(query, currentSession);
+                var loadWindow = new LoadWindow(query.ToList(), currentSession);
                 loadWindow.ShowDialog();
 
-                currentSession = loadWindow?.Selected ?? new();
+                if (currentSession.Id != loadWindow.Selected.Id)
+                {
+                    FunctionChrono.NoCounter = true;
+
+                    chronosToRemove.Clear();
+                    currentSession.Chronos.Clear();
+                    currentSession = loadWindow?.Selected ?? new();
+                }
 
                 listChronos = new ObservableCollection<Chronos>(context.Chronos.Where(x => x.SessionId == currentSession.Id).ToList());
 
-                var subQuery = from chronos in currentSession.Chronos
+                var chronosToFunctionChrono = from chronos in currentSession.Chronos
                                select new FunctionChrono
                                {
                                    Time = TimeSpan.FromTicks(chronos.Time),
@@ -362,7 +364,7 @@ namespace ChronoCounter.ViewModels
                                    Number = (int)chronos.Number
                                };
 
-                var _ = new BindingList<FunctionChrono>(subQuery.ToList());
+                var _ = new BindingList<FunctionChrono>(chronosToFunctionChrono.ToList());
 
                 ResetButton();
 
