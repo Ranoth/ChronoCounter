@@ -69,6 +69,8 @@ namespace ChronoCounter.ViewModels
 
         public ChronoCounterViewModel()
         {
+            HandshakeDBAsync();
+
             globalKeyboardHook = new();
             globalKeyboardHook.KeyboardPressed += OnKeyboardPressed;
 
@@ -85,6 +87,18 @@ namespace ChronoCounter.ViewModels
             });
 
             LoadKeyBindFromXml();
+        }
+
+        private async Task HandshakeDBAsync() //Workaround because DB lags at first connection
+        {
+            await Task.Run(() =>
+            {
+                using (SessionsDBdbContext context = new())
+                {
+                    var _ = (from sessions in context.Session
+                     select sessions.Id).ToList();
+                }
+            });
         }
 
         private void LoadKeyBindFromXml()
@@ -357,12 +371,12 @@ namespace ChronoCounter.ViewModels
                 listChronos = new ObservableCollection<Chronos>(context.Chronos.Where(x => x.SessionId == currentSession.Id).ToList());
 
                 var chronosToFunctionChrono = from chronos in currentSession.Chronos
-                               select new FunctionChrono
-                               {
-                                   Time = TimeSpan.FromTicks(chronos.Time),
-                                   Name = chronos.Name,
-                                   Number = (int)chronos.Number
-                               };
+                                              select new FunctionChrono
+                                              {
+                                                  Time = TimeSpan.FromTicks(chronos.Time),
+                                                  Name = chronos.Name,
+                                                  Number = (int)chronos.Number
+                                              };
 
                 var tempChronosList = new BindingList<FunctionChrono>(chronosToFunctionChrono.ToList());
 
@@ -396,4 +410,3 @@ namespace ChronoCounter.ViewModels
         }
     }
 }
-
