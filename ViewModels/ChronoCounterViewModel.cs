@@ -380,6 +380,8 @@ namespace ChronoCounter.ViewModels
 
                 var tempChronosList = new BindingList<FunctionChrono>(chronosToFunctionChrono.ToList());
 
+                if (currentSession.Id == 0) return;
+
                 ResetButton();
 
                 chronosToRemove.Clear();
