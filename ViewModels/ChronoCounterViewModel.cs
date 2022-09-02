@@ -364,13 +364,13 @@ namespace ChronoCounter.ViewModels
                                    Number = (int)chronos.Number
                                };
 
-                var _ = new BindingList<FunctionChrono>(chronosToFunctionChrono.ToList());
+                var tempChronosList = new BindingList<FunctionChrono>(chronosToFunctionChrono.ToList());
 
                 ResetButton();
 
                 chronosToRemove.Clear();
 
-                foreach (var item in _)
+                foreach (var item in tempChronosList)
                 {
                     Chronos.Add(item);
                 }
@@ -383,7 +383,7 @@ namespace ChronoCounter.ViewModels
 
                 SetTotalTimeDisp();
 
-                if (_.Any()) FunctionChrono.Counter = Chronos.Max(x => x.Number) + 1;
+                if (tempChronosList.Any()) FunctionChrono.Counter = Chronos.Max(x => x.Number) + 1;
                 else FunctionChrono.Counter = 1;
                 FunctionChrono.NoCounter = false;
 
