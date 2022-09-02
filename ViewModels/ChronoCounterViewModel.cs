@@ -96,7 +96,7 @@ namespace ChronoCounter.ViewModels
             {
                 using (SessionsDBdbContext context = new())
                 {
-                    var _ = context.Session.Select(x => x.Id).FirstOrDefault();
+                    var _ = context.Session.Select(x => x.Id).FirstOrDefaultAsync();
                 }
             });
         }
