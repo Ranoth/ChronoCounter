@@ -16,6 +16,7 @@ using System.Text;
 using ChronoCounter.DBModels;
 using ChronoCounter.DBContexts;
 using System.Collections.ObjectModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChronoCounter.ViewModels
 {
@@ -95,8 +96,7 @@ namespace ChronoCounter.ViewModels
             {
                 using (SessionsDBdbContext context = new())
                 {
-                    var _ = (from sessions in context.Session
-                     select sessions.Id).ToList();
+                    var _ = context.Session.Select(x => x.Id).FirstOrDefaultAsync();
                 }
             });
         }
