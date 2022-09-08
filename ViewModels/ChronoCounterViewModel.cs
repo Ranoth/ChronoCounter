@@ -371,6 +371,7 @@ namespace ChronoCounter.ViewModels
                 listChronos = new ObservableCollection<Chronos>(context.Chronos.Where(x => x.SessionId == currentSession.Id).ToList());
 
                 var chronosToFunctionChrono = from chronos in currentSession.Chronos
+                                              orderby chronos.Id
                                               select new FunctionChrono
                                               {
                                                   Time = TimeSpan.FromTicks(chronos.Time),
