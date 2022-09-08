@@ -84,24 +84,28 @@
 
         <ScrollViewer Grid.Column="1" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Chronos}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBox IsEnabled="False" FontSize="24" Text="{Binding Name}" MinWidth="100"/>
-                            <TextBox IsEnabled="False" FontSize="24" Text="{Binding DisplayTime}"/>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox IsEnabled="False" FontSize="24" Text="{Binding Name}" MinWidth="100" Grid.Column="0"/>
+                            <TextBox IsEnabled="False" FontSize="24" Text="{Binding DisplayTime}" Grid.Column="1" HorizontalAlignment="Stretch"
+                                           TextAlignment="Center"/>
                             <Button Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.RemoveChronoCommand}"
-                                    CommandParameter="{Binding Number}">
+                                    CommandParameter="{Binding Number}" Grid.Column="2">
                                 <Button.Content>
                                     <Image Source="/Images/removeIcon.png"/>
                                 </Button.Content>
                             </Button>
-                        </StackPanel>
+                        </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
