@@ -10,7 +10,7 @@
         Icon="Images/stopwatch.ico"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize"
-        Title="Chrono Counter" Background="SlateGray" MinHeight="100" MinWidth="275" MaxHeight="365" SizeToContent="WidthAndHeight">
+        Title="Chrono Counter" Background="SlateGray" MinHeight="127" MaxHeight="365" SizeToContent="WidthAndHeight">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
