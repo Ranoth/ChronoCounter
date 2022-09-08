@@ -70,8 +70,6 @@ namespace ChronoCounter.ViewModels
 
         public ChronoCounterViewModel()
         {
-            HandshakeDBAsync();
-
             globalKeyboardHook = new();
             globalKeyboardHook.KeyboardPressed += OnKeyboardPressed;
 
@@ -88,17 +86,6 @@ namespace ChronoCounter.ViewModels
             });
 
             LoadKeyBindFromXml();
-        }
-
-        private async Task HandshakeDBAsync() //Workaround because DB lags at first connection
-        {
-            await Task.Run(() =>
-            {
-                using (SessionsDBdbContext context = new())
-                {
-                    var _ = context.Session.Select(x => x.Id).FirstOrDefaultAsync();
-                }
-            });
         }
 
         private void LoadKeyBindFromXml()
@@ -359,7 +346,7 @@ namespace ChronoCounter.ViewModels
                 var loadWindow = new LoadWindow(query.ToList(), currentSession);
                 loadWindow.ShowDialog();
 
-                if (currentSession.Id != loadWindow.Selected.Id)
+                if (currentSession.Id != (loadWindow.Selected?.Id ?? 0))
                 {
                     FunctionChrono.NoCounter = true;
 
@@ -381,7 +368,12 @@ namespace ChronoCounter.ViewModels
 
                 var tempChronosList = new BindingList<FunctionChrono>(chronosToFunctionChrono.ToList());
 
-                if (currentSession.Id == 0) return;
+                if (currentSession.Id == 0)
+                {
+                    SessionNameDisp = "None";
+                    SessionNbDisp = "None";
+                    return;
+                }
 
                 ResetButton();
 
