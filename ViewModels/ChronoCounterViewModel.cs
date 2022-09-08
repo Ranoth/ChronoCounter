@@ -354,6 +354,10 @@ namespace ChronoCounter.ViewModels
                     currentSession.Chronos.Clear();
                     currentSession = loadWindow?.Selected ?? new();
                 }
+                else if (currentSession.Id == (loadWindow.Selected?.Id ?? 0) && (loadWindow.Selected?.Name ?? "None") != "None")
+                {
+                    currentSession = loadWindow?.Selected ?? new();
+                }
 
                 listChronos = new ObservableCollection<Chronos>(context.Chronos.Where(x => x.SessionId == currentSession.Id).ToList());
 
