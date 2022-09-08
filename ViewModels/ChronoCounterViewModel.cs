@@ -29,7 +29,6 @@ namespace ChronoCounter.ViewModels
         private HotKey keyBindSplit = new();
         private Session currentSession = new();
         private List<Chronos> chronosToRemove = new();
-        private ObservableCollection<Chronos> listChronos = new();
 
         [NotifyCanExecuteChangedFor(nameof(PauseButtonCommand))]
         [ObservableProperty]
@@ -166,7 +165,7 @@ namespace ChronoCounter.ViewModels
                 SplitButtonContent = "Start";
                 SplitButtonImg = "/Images/plusButtonIcon.png";
 
-                listChronos.Add(FcToC(chrono));
+                currentSession.Chronos.Add(FcToC(chrono));
             }
         }
         public void Timer_Tick(object sender, EventArgs e)
@@ -179,7 +178,7 @@ namespace ChronoCounter.ViewModels
         private void RemoveChrono(int id)
         {
             var funcChronoToRemove = Chronos.FirstOrDefault(x => x.Number == id);
-            var chronoToRemove = listChronos.FirstOrDefault(x => x.Number == id);
+            var chronoToRemove = currentSession.Chronos.FirstOrDefault(x => x.Number == id);
             totalElapsedTime = totalElapsedTime.Subtract(funcChronoToRemove.Time);
             SetTotalTimeDisp();
             chronosToRemove.Add(chronoToRemove);
@@ -234,7 +233,7 @@ namespace ChronoCounter.ViewModels
 
                 Chronos.Clear();
 
-                chronosToRemove.AddRange(listChronos);
+                chronosToRemove.AddRange(currentSession.Chronos);
 
                 totalElapsedTime = TimeSpan.Zero;
                 SetTotalTimeDisp();
@@ -284,12 +283,11 @@ namespace ChronoCounter.ViewModels
                 using (SessionsDBdbContext context = new())
                 {
                     context.Update(currentSession);
-                    context.UpdateRange(listChronos);
                     context.RemoveRange(chronosToRemove);
                     context.SaveChanges();
-
-                    chronosToRemove.Clear();
                 }
+
+                chronosToRemove.Clear();
             }
         }
         [RelayCommand]
@@ -358,10 +356,6 @@ namespace ChronoCounter.ViewModels
                 {
                     currentSession = loadWindow?.Selected ?? new();
                 }
-
-                listChronos = new ObservableCollection<Chronos>(currentSession.Chronos);
-
-                //listChronos = new ObservableCollection<Chronos>(context.Chronos.Where(x => x.SessionId == currentSession.Id).ToList());
 
                 var chronosToFunctionChrono = from chronos in currentSession.Chronos
                                               orderby chronos.Id
