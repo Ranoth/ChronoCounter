@@ -191,12 +191,12 @@ namespace ChronoCounter.ViewModels
         [RelayCommand]
         private void RemoveChrono(int id)
         {
-            var fChronoToRemove = Chronos.FirstOrDefault(x => x.Number == id);
+            var funcChronoToRemove = Chronos.FirstOrDefault(x => x.Number == id);
             var chronoToRemove = listChronos.FirstOrDefault(x => x.Number == id);
-            totalElapsedTime = totalElapsedTime.Subtract(fChronoToRemove.Time);
+            totalElapsedTime = totalElapsedTime.Subtract(funcChronoToRemove.Time);
             SetTotalTimeDisp();
             chronosToRemove.Add(chronoToRemove);
-            Chronos.Remove(fChronoToRemove);
+            Chronos.Remove(funcChronoToRemove);
         }
 
         [RelayCommand]
