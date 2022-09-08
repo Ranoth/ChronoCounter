@@ -359,7 +359,9 @@ namespace ChronoCounter.ViewModels
                     currentSession = loadWindow?.Selected ?? new();
                 }
 
-                listChronos = new ObservableCollection<Chronos>(context.Chronos.Where(x => x.SessionId == currentSession.Id).ToList());
+                listChronos = new ObservableCollection<Chronos>(currentSession.Chronos);
+
+                //listChronos = new ObservableCollection<Chronos>(context.Chronos.Where(x => x.SessionId == currentSession.Id).ToList());
 
                 var chronosToFunctionChrono = from chronos in currentSession.Chronos
                                               orderby chronos.Id
