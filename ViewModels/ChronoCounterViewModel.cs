@@ -101,8 +101,10 @@ namespace ChronoCounter.ViewModels
                 var xQuery = from binds in xDoc.Elements("KeyBind")
                              select new HotKey
                              {
-                                 Key = (Key)Enum.Parse(typeof(Key), binds.Attribute(nameof(KeyBindSplit.Key)).Value.ToString()),
-                                 Modifiers = (ModifierKeys)Enum.Parse(typeof(ModifierKeys), binds.Attribute(nameof(KeyBindSplit.Modifiers)).Value.ToString())
+                                 Key = (Key)Enum.Parse(typeof(Key),
+                                        binds.Attribute(nameof(KeyBindSplit.Key)).Value.ToString()),
+                                 Modifiers = (ModifierKeys)Enum.Parse(typeof(ModifierKeys),
+                                         binds.Attribute(nameof(KeyBindSplit.Modifiers)).Value.ToString())
                              };
 
                 KeyBindSplit = xQuery.FirstOrDefault();
@@ -130,7 +132,9 @@ namespace ChronoCounter.ViewModels
         private void OnKeyboardPressed(object? sender, GlobalKeyboardHookEventArgs e)
         {
             var pressedKey = new HotKey(KeyInterop.KeyFromVirtualKey((int)e.KeyboardData.Key), Keyboard.Modifiers);
-            if (KeyBindSplit.Key == pressedKey.Key && KeyBindSplit.Modifiers == pressedKey.Modifiers && !e.KeyboardState.HasFlag(GlobalKeyboardHook.KeyboardState.KeyUp))
+            if (KeyBindSplit.Key == pressedKey.Key &&
+                KeyBindSplit.Modifiers == pressedKey.Modifiers &&
+                !e.KeyboardState.HasFlag(GlobalKeyboardHook.KeyboardState.KeyUp))
             {
                 IsTiming = !IsTiming;
                 ActuateChrono();
@@ -259,7 +263,10 @@ namespace ChronoCounter.ViewModels
 
         private void SetTotalTimeDisp()
         {
-            TotalTimeDisp = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", totalElapsedTime.Hours, totalElapsedTime.Minutes, totalElapsedTime.Seconds, totalElapsedTime.Milliseconds / 10);
+            TotalTimeDisp = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", totalElapsedTime.Hours,
+                totalElapsedTime.Minutes,
+                totalElapsedTime.Seconds,
+                totalElapsedTime.Milliseconds / 10);
         }
 
         private Chronos FcToC(FunctionChrono fc)
