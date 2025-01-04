@@ -73,7 +73,7 @@
                 <Button MaxHeight="22" Command="{Binding BindingSplitButtonCommand}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="/Images/delIcon.png"/>
-                        <TextBlock Text="Bind Start / Stop" Margin="2,0,0,0" Visibility="{Binding BindDefaultTextVisible}"/>
+                        <TextBlock Margin="2,0,0,0" Visibility="{Binding BindDefaultTextVisible}"/>
                         <TextBlock Text="{Binding BindingSplitButtonContent}" Margin="2,0,0,0"/>
                     </StackPanel>
                 </Button>
