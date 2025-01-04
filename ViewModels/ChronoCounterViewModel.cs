@@ -99,17 +99,20 @@ namespace ChronoCounter.ViewModels
                 var xDoc = XDocument.Load("KeyBinds.xml");
 
                 var xQuery = from binds in xDoc.Elements("KeyBind")
+                             let keyAttr = binds.Attribute(nameof(KeyBindSplit.Key))
+                             let modAttr = binds.Attribute(nameof(KeyBindSplit.Modifiers))
+                             where keyAttr != null && modAttr != null
                              select new HotKey
                              {
-                                 Key = (Key)Enum.Parse(typeof(Key),
-                                        binds.Attribute(nameof(KeyBindSplit.Key)).Value.ToString()),
-                                 Modifiers = (ModifierKeys)Enum.Parse(typeof(ModifierKeys),
-                                         binds.Attribute(nameof(KeyBindSplit.Modifiers)).Value.ToString())
+                                 Key = (Key)Enum.Parse(typeof(Key), keyAttr.Value),
+                                 Modifiers = (ModifierKeys)Enum.Parse(typeof(ModifierKeys), modAttr.Value)
                              };
 
+                if (!xQuery.Any()) return;
+
                 KeyBindSplit = xQuery.FirstOrDefault();
-                if (KeyBindSplit.Key == Key.None) BindingSplitButtonContent = "Bind Start / Stop";
-                else BindingSplitButtonContent = KeyBindSplit.ToString();
+                if (KeyBindSplit?.Key == Key.None) BindingSplitButtonContent = "Bind Start / Stop";
+                else BindingSplitButtonContent = KeyBindSplit?.ToString();
             }
         }
 
